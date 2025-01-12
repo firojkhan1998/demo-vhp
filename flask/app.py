@@ -1,5 +1,5 @@
 from flask_migrate import Migrate
-from flask import Flask, flash, render_template, request
+from flask import Flask, flash, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
@@ -147,10 +147,40 @@ def hospital_view():
     return render_template('hospital_view.html', new_hospital=allnew_hospital)
 
 
-@app.route("/welcome/<name>")
-def welcome_name(name):
-    return f"<h1>Welcome {name}!</h1>"
+@app.route("/delete/<int:id>")
+def delete(id):
+    demo = Demo.query.filter_by(id=id).first()
+    if demo:
+        db.session.delete(demo)
+        db.session.commit()
+    return redirect(url_for('provider_view'))
 
+
+@app.route("/update/<int:id>")
+def update(id):
+    demo = Demo.query.filter_by(id=id).first()
+    if demo:
+        db.session.update(demo)
+        db.session.commit()
+        return redirect(url_for('provider_view'))
+    return render_template('update.html', demo=demo)
+
+
+@app.route("/delete/patient/<int:patient_id>")
+def delete_patient(patient_id):
+    patient = Patient.query.filter_by(patient_id=patient_id).first()
+    if patient:
+        db.session.delete(patient)
+        db.session.commit()
+    return redirect(url_for('patient_view'))
+
+@app.route("/delete/hospital/<int:id>")
+def delete_hospital(id):
+    hospital = Hospital.query.filter_by(id=id).first()
+    if hospital:
+        db.session.delete(hospital)
+        db.session.commit()
+    return redirect(url_for('hospital_view'))
 
 if __name__ == "__main__":
     app.run(debug=True)

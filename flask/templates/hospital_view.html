@@ -1,35 +1,36 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
-    <title>CRC</title>
-</head>
-<body>
-    <table class="table table-bordered">
-        <thead>
-          <tr>
-            <th scope="col">id</th>
-            <th scope="col">Hospital Name</th>
-            <th scope="col">Hospital Company Name</th>
-            <th scope="col">Email</th>
-            <th scope="col">Contact Number</th>
-            <th scope="col">Address</th>
-          </tr>
-        </thead>
-        <tbody>
-            {% for hospital in new_hospital %}
-            <tr>
-                <th scope="row">{{hospital.hospital_id}}</th>
-                <td>{{hospital.hospital_name}}</td>
-                <td>{{hospital.hospital_company_name}}</td>
-                <td>{{hospital.hospital_email}}</td>
-                <td>{{hospital.hospital_contact}}</td>
-                <td>{{hospital.hospital_address}}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-      </table>
-</body>
-</html>
+{% extends 'index.html' %}
+{% block body %}
+<div class="d-grid gap-2 d-md-flex justify-content-md-end">
+  <a href="/hospital_create" class="btn btn-primary" type="button">Add new</a>
+</div>
+<br>
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th scope="col">id</th>
+      <th scope="col">Hospital Name</th>
+      <th scope="col">Hospital Company Name</th>
+      <th scope="col">Email</th>
+      <th scope="col">Contact Number</th>
+      <th scope="col">Address</th>
+      <th scope="col">Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for hospital in new_hospital %}
+    <tr>
+      <td scope="row">{{hospital.id}}</td>
+      <td>{{hospital.hospital_name}}</td>
+      <td>{{hospital.hospital_company_name}}</td>
+      <td>{{hospital.hospital_email}}</td>
+      <td>{{hospital.hospital_contact}}</td>
+      <td>{{hospital.hospital_address}}</td>
+      <td>
+        <a href="/update/{{hospital.id}}" type="button" class="btn btn-secondary">Edit</a>
+        <a href="/delete/hospital/{{hospital.id}}" type="button" class="btn btn-danger">Delete</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock body %}
