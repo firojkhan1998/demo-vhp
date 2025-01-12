@@ -7,7 +7,7 @@
     <title>CRC</title>
 </head>
 <body>
-    <table class="table">
+    <table class="table table-bordered">
         <thead>
           <tr>
             <th scope="col">id</th>
@@ -19,11 +19,11 @@
           </tr>
         </thead>
         <tbody>
-            {% for hospital in Hospital %}
+            {% for hospital in new_hospital %}
             <tr>
-                <th scope="row">{{hospital.id}}</th>
+                <th scope="row">{{hospital.hospital_id}}</th>
                 <td>{{hospital.hospital_name}}</td>
-                <td>{{hospital.Company_name}}</td>
+                <td>{{hospital.hospital_company_name}}</td>
                 <td>{{hospital.hospital_email}}</td>
                 <td>{{hospital.hospital_contact}}</td>
                 <td>{{hospital.hospital_address}}</td>

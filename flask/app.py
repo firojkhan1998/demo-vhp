@@ -1,5 +1,5 @@
 from flask_migrate import Migrate
-from flask import Flask, render_template, request
+from flask import Flask, flash, render_template, request
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
@@ -89,6 +89,8 @@ def patient_create():
         patient_email = request.form['patient_email']
         patient_contact = request.form['patient_contact']
         patient_address = request.form['patient_address']
+        if len(patient_aadhar) != 12:
+            flash("Invalid Aadhar number. It should be 12 digits.", "error")
 
         patient_dob = datetime.strptime(patient_dob, "%Y-%m-%d")
 
@@ -117,18 +119,18 @@ def patient_view():
 def hello_world():
     return render_template('index.html')
 
-@app.route("/hospital_create")
+@app.route("/hospital_create", methods=['GET', 'POST'])
 def hospital_create():    
     if request.method == "POST":
-        hospital_name = request.form['hospital_fname']
-        Company_name = request.form['hospital_lname']
+        hospital_name = request.form['hospital_name']
+        hospital_company_name = request.form['hospital_company_name']
         hospital_email = request.form['hospital_email']
         hospital_contact = request.form['hospital_contact']
         hospital_address = request.form['hospital_address']
 
-        new_hospital = Patient(
+        new_hospital = Hospital(
             hospital_name=hospital_name,
-            Company_name=Company_name,
+            hospital_company_name=hospital_company_name,
             hospital_email=hospital_email,
             hospital_contact=hospital_contact,
             hospital_address=hospital_address
