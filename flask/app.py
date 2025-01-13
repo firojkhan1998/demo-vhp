@@ -178,6 +178,39 @@ def provider_update(id):
             return redirect(url_for('provider_view'))
     return render_template('provider_edit.html', demo=demo)
 
+@app.route("/patient_update/<int:patient_id>", methods=["GET", "POST"])
+def patient_update(patient_id):
+    patient = Patient.query.filter_by(patient_id=patient_id).first()
+    if patient:
+        if request.method == "POST":
+            patient.patient_fname = request.form.get('patient_fname')
+            patient.patient_lname = request.form.get('patient_lname')
+            patient.patient_dob = datetime.strptime(request.form.get('patient_dob'), "%Y-%m-%d")
+            patient.patient_aadhar = request.form.get('patient_aadhar')
+            patient.patient_email = request.form.get('patient_email')
+            patient.patient_contact = request.form.get('patient_contact')
+            patient.patient_address = request.form.get('patient_address')
+
+            db.session.commit()
+            return redirect(url_for('patient_view'))
+    return render_template('patient_edit.html', patient=patient)
+
+
+@app.route("/hospital_update/<int:id>", methods=["GET","POST"])
+def hospital_update(id):
+    hospital = Hospital.query.filter_by(id=id).first()
+    if hospital:
+        if request.method == "POST":
+            hospital.hospital_name = request.form.get('hospital_name')
+            hospital.hospital_company_name = request.form.get('hospital_company_name')
+            hospital.hospital_email = request.form.get('hospital_email')
+            hospital.hospital_contact = request.form.get('hospital_contact')
+            hospital.hospital_address = request.form.get('hospital_address')
+
+            db.session.commit()
+            return redirect(url_for('hospital_view'))
+    return render_template('hospital_edit.html', hospital=hospital)
+
 
 @app.route("/delete/patient/<int:patient_id>")
 def delete_patient(patient_id):
