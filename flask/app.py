@@ -45,6 +45,16 @@ class Hospital(db.Model):
     def __repr__(self):
         return f"{self.id} - {self.hospital_name} - {self.hospital_company_name} - {self.hospital_email} - {self.hospital_contact} - {self.hospital_address}"
 
+  
+@app.route("/")
+def hello_world():
+    return render_template('index.html')
+
+
+@app.route("/dashboard")
+def dashboard():
+    return render_template('dashboard.html')
+
 
 @app.route('/provider_create', methods=["GET", "POST"])
 def provider_create():
@@ -69,7 +79,7 @@ def provider_create():
         )
         db.session.add(new_demo)
         db.session.commit()
-        return render_template('provider_create.html', message="Provider information saved successfully!")
+        return redirect(url_for('provider_view'))
     return render_template('provider_create.html')
 
 
@@ -77,6 +87,7 @@ def provider_create():
 def provider_view():
     allnew_demo = Demo.query.all()
     return render_template('provider_view.html', demo=allnew_demo)
+
 
 
 @app.route('/patient_create', methods=["GET", "POST"])
@@ -89,9 +100,6 @@ def patient_create():
         patient_email = request.form['patient_email']
         patient_contact = request.form['patient_contact']
         patient_address = request.form['patient_address']
-        if len(patient_aadhar) != 12:
-            flash("Invalid Aadhar number. It should be 12 digits.", "error")
-
         patient_dob = datetime.strptime(patient_dob, "%Y-%m-%d")
 
         new_patient = Patient(
@@ -105,7 +113,7 @@ def patient_create():
         )
         db.session.add(new_patient)
         db.session.commit()
-        return render_template('patient_create.html', message="Patient information saved successfully!")
+        return redirect(url_for('patient_view'))
     return render_template('patient_create.html')
 
 
@@ -114,10 +122,6 @@ def patient_view():
     allnew_patient = Patient.query.all()
     return render_template('patient_view.html', new_patient=allnew_patient)
 
-
-@app.route("/")
-def hello_world():
-    return render_template('index.html')
 
 @app.route("/hospital_create", methods=['GET', 'POST'])
 def hospital_create():    
@@ -137,7 +141,7 @@ def hospital_create():
         )
         db.session.add(new_hospital)
         db.session.commit()
-        return render_template('hospital_create.html', message="Hospital information saved successfully!")
+        return redirect(url_for('hospital_view'))
     return render_template('hospital_create.html')
 
 
@@ -156,14 +160,23 @@ def delete(id):
     return redirect(url_for('provider_view'))
 
 
-@app.route("/update/<int:id>")
-def update(id):
+@app.route("/provider_update/<int:id>", methods=["GET", "POST"])
+def provider_update(id):
     demo = Demo.query.filter_by(id=id).first()
     if demo:
-        db.session.update(demo)
-        db.session.commit()
-        return redirect(url_for('provider_view'))
-    return render_template('update.html', demo=demo)
+        if request.method == "POST":
+            demo.fname = request.form.get('firstname')
+            demo.lname = request.form.get('lastname')
+            demo.dob = datetime.strptime(request.form.get('dob'), "%Y-%m-%d")
+            demo.email = request.form.get('email')
+            demo.contact = request.form.get('phone')
+            demo.degree = request.form.get('degree')
+            demo.address = request.form.get('address')
+
+            db.session.commit()
+
+            return redirect(url_for('provider_view'))
+    return render_template('provider_edit.html', demo=demo)
 
 
 @app.route("/delete/patient/<int:patient_id>")
