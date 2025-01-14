@@ -1,10 +1,10 @@
 {% extends 'index.html' %}
 {% block body %}
-<h1>Dashboard</h1>
-<div class="row mb10">
-    <div class="col-sm-6 col-md-2">
-        <div class="panel shadow-inner  bg-info  of-h mb10">
-            <div class="pn pl20 p5">
+<h1 class="pn pl20 p5 text-center mb-5">Dashboard</h1>
+<div class="row ">
+    <div class="col-sm-6 col-md-3">
+        <div class="shadow-lg bg-body rounded bg-info  of-h mb10">
+            <div class="pn pl20 p5 text-center">
                 <h2 class="mt15 lh15">
                     <b>1509</b>
                 </h2>
@@ -12,9 +12,9 @@
             </div>
         </div>
     </div>
-    <div class="col-sm-6 col-md-2">
-        <div class="panel shadow-inner  bg-primary   of-h mb10">
-            <div class="pn pl20 p5">
+    <div class="col-sm-6 col-md-3">
+        <div class="shadow-lg p mb-2 bg-body rounded bg-primary of-h mb10">
+            <div class="pn pl20 p5 text-center">
                 <h2 class="mt15 lh15">
                     <b>{{ count }}</b>
                 </h2>
@@ -22,45 +22,35 @@
             </div>
         </div>
     </div>
-    <div class="col-sm-6 col-md-2">
-        <div class="panel shadow-inner  bg-success   of-h mb10">
-            <div class="pn pl20 p5">
+    <div class="col-sm-6 col-md-3">
+        <div class="shadow-lg p mb-2 bg-body rounded bg-success of-h mb10">
+            <div class="pn pl20 p5 text-center">
                 <h2 class="mt15 lh15">
-                    <b>78</b>
+                    <b>{{ patient_count }}</b>
                 </h2>
-                <h5>Claims</h5>
+                <h5>Patients</h5>
             </div>
         </div>
     </div>
-    <div class="col-sm-6 col-md-2">
-        <div class="panel shadow-inner  bg-warning   of-h mb10">
-            <div class="pn pl20 p5">
+    <div class="col-sm-6 col-md-3">
+        <div class="shadow-lg p mb-2 bg-body rounded bg-warning of-h mb10">
+            <div class="pn pl20 p5 text-center">
                 <h2 class="mt15 lh15">
-                    <b>17</b>
+                    <b>{{ hospital_count }}</b>
                 </h2>
-                <h5>Credentialing</h5>
+                <h5>Hospital</h5>
             </div>
         </div>
     </div>
-    <div class="col-sm-6 col-md-2">
-        <div class="panel shadow-inner  bg-danger   of-h mb10">
-            <div class="pn pl20 p5">
+    <!-- <div class="col-sm-6 col-md-2">
+        <div class="shadow-lg p mb-2 bg-body rounded bg-danger of-h mb10">
+            <div class="pn pl20 p5 text-center">
                 <h2 class="mt15 lh15">
                     <b>13</b>
                 </h2>
                 <h5>Users</h5>
             </div>
         </div>
-    </div>
-    <div class="col-sm-6 col-md-2">
-        <div class="panel shadow-inner  bg-info  of-h mb10">
-            <div class="pn pl20 p5">
-                <h2 class="mt15 lh15">
-                    <b>635</b>
-                </h2>
-                <h5>Patients</h5>
-            </div>
-        </div>
-    </div>
+    </div> -->
 </div>
 {% endblock body %}

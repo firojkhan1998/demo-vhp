@@ -1,25 +1,24 @@
 {% extends 'index.html' %}
 {% block body %}
-<h1>Patients</h1>
+<h1>Create Visit</h1>
 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-  <a href="/patient_create" class="btn btn-primary" type="button">Add new</a>
+  <a href="/visit_create" class="btn btn-primary" type="button">Add Visit</a>
 </div>
 <br>
 <table class="table table-bordered">
   <thead>
     <tr>
       <th scope="col">id</th>
-      <th scope="col">First Name</th>
-      <th scope="col">Last Name</th>
+      <th scope="col">Name</th>
       <th scope="col">Date of Birth</th>
-      <th scope="col">Aadhar Number</th>
-      <th scope="col">Email</th>
-      <th scope="col">Contact Number</th>
-      <th scope="col">Address</th>
+      <th scope="col">Date of Visit</th>
+      <th scope="col">Doctor</th>
+      <th scope="col">Hospital</th>
+      <th scope="col">Create Date</th>
       <th scope="col" class="" colspan="2">Action</th>
     </tr>
   </thead>
-  <tbody>
+  <!-- <tbody>
     {% for patient in new_patient %}
     <tr>
       <td>{{patient.patient_id}}</td>
@@ -36,7 +35,7 @@
       </td>
     </tr>
     {% endfor %}
-  </tbody>
+  </tbody> -->
 </table>
 <div>
   {% for patient in new_patient %}

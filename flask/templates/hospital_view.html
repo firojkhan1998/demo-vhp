@@ -18,7 +18,7 @@
     </tr>
   </thead>
   <tbody>
-    {% for hospital in new_hospital %}
+    {% for hospital in hospital %}
     <tr>
       <td scope="row">{{hospital.id}}</td>
       <td>{{hospital.hospital_name}}</td>
@@ -34,4 +34,10 @@
     {% endfor %}
   </tbody>
 </table>
+  <div>
+    {% for hospital_item in hospital %}
+    {{ hospital_item.some_column_name }}
+    {% endfor %}
+    <b>Total Number of Hospitals: {{ hospital_count }}</b>
+  </div>
 {% endblock body %}

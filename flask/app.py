@@ -55,7 +55,10 @@ def hello_world():
 
 @app.route("/dashboard")
 def dashboard():
-    return render_template('dashboard.html')
+    count = Demo.query.count()
+    patient_count = Patient.query.count()
+    hospital_count = Hospital.query.count()
+    return render_template('dashboard.html', count=count, patient_count=patient_count, hospital_count=hospital_count)
 
 
 @app.route('/provider_create', methods=["GET", "POST"])
@@ -105,6 +108,8 @@ def patient_create():
         patient_address = request.form['patient_address']
         patient_dob = datetime.strptime(patient_dob, "%Y-%m-%d")
 
+        patient_name = patient_fname + " " + patient_lname
+
         new_patient = Patient(
             patient_fname=patient_fname,
             patient_lname=patient_lname,
@@ -116,14 +121,15 @@ def patient_create():
         )
         db.session.add(new_patient)
         db.session.commit()
-        return redirect(url_for('patient_view'))
+        return redirect(url_for('patient_view', patient_name=patient_name))
     return render_template('patient_create.html')
 
 
 @app.route('/patient_view')
 def patient_view():
     allnew_patient = Patient.query.all()
-    return render_template('patient_view.html', new_patient=allnew_patient)
+    patient_count = Patient.query.count()
+    return render_template('patient_view.html', new_patient=allnew_patient, patient_count=patient_count)
 
 
 @app.route("/hospital_create", methods=['GET', 'POST'])
@@ -135,14 +141,14 @@ def hospital_create():
         hospital_contact = request.form['hospital_contact']
         hospital_address = request.form['hospital_address']
 
-        new_hospital = Hospital(
+        hospital  = Hospital(
             hospital_name=hospital_name,
             hospital_company_name=hospital_company_name,
             hospital_email=hospital_email,
             hospital_contact=hospital_contact,
             hospital_address=hospital_address
         )
-        db.session.add(new_hospital)
+        db.session.add(hospital)
         db.session.commit()
         return redirect(url_for('hospital_view'))
     return render_template('hospital_create.html')
@@ -150,8 +156,9 @@ def hospital_create():
 
 @app.route('/hospital_view')
 def hospital_view():
-    allnew_hospital = Hospital.query.all()
-    return render_template('hospital_view.html', new_hospital=allnew_hospital)
+    allhospital = Hospital.query.all()
+    hospital_count = Hospital.query.count()
+    return render_template('hospital_view.html', hospital =allhospital, hospital_count=hospital_count)
 
 
 @app.route("/delete/<int:id>")
@@ -232,11 +239,15 @@ def delete_hospital(id):
     return redirect(url_for('hospital_view'))
 
 
-# @app.route('/provider-count')
-# def provider_count():
-#     # Get the total count of users
-#     count = Demo.query.count()
-#     return f"Total number of users: {count}"
+@app.route("/visit_view")
+def visit_view():
+    return render_template('visit_view.html')
+
+
+@app.route("/visit_create")
+def visit_create():
+    return render_template('visit_create.html')
+
 
 if __name__ == "__main__":
     app.run(debug=True)
