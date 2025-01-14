@@ -5,6 +5,8 @@ from datetime import datetime
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///demo.db"
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
@@ -86,7 +88,8 @@ def provider_create():
 @app.route('/provider_view')
 def provider_view():
     allnew_demo = Demo.query.all()
-    return render_template('provider_view.html', demo=allnew_demo)
+    count = Demo.query.count()
+    return render_template('provider_view.html', demo=allnew_demo, count=count)
 
 
 
@@ -227,6 +230,13 @@ def delete_hospital(id):
         db.session.delete(hospital)
         db.session.commit()
     return redirect(url_for('hospital_view'))
+
+
+# @app.route('/provider-count')
+# def provider_count():
+#     # Get the total count of users
+#     count = Demo.query.count()
+#     return f"Total number of users: {count}"
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -38,4 +38,10 @@
     {% endfor %}
   </tbody>
 </table>
+<div>
+  {% for demo in demo %}
+  {{ demo.some_column_name }}
+  {% endfor %}
+  <b>Total Number of Doctors: {{ count }}</b>
+</div>
 {% endblock body %}
