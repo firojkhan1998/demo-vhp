@@ -24,11 +24,8 @@
                     </div>
                     <div class="form-group mb-3">
                         <label for="dos">Date of Visit:</label>
-                        <select name="dos" class="form-control" id="dos">
-                            {% for patient in patient %}
-                            <option value="{{ patient.patient_dos }}">{{ patient.some_column_name }}</option>
-                            {% endfor %}
-                        </select>
+                        <input type="date" class="form-control" id="dos" placeholder="Contact Number"
+                        name="dos" required>
                     </div>
 
                     <div class="form-group mb-3">
