@@ -10,44 +10,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-class Demo(db.Model):
-    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    fname = db.Column(db.String(100), nullable=False)
-    lname = db.Column(db.String(100), nullable=False)
-    dob = db.Column(db.DateTime, nullable=False)
-    email = db.Column(db.String(100), nullable=False)
-    contact = db.Column(db.String(15), nullable=False)
-    degree = db.Column(db.String(100), nullable=False)
-    address = db.Column(db.String(255), nullable=False)
-
-    def __repr__(self):
-        return f"{self.id} - {self.fname} - {self.lname} - {self.dob} - {self.email} - {self.contact} - {self.degree} - {self.address}"
-
-class Patient(db.Model):
-    patient_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    patient_fname = db.Column(db.String(100), nullable=False)
-    patient_lname = db.Column(db.String(100), nullable=False)
-    patient_dob = db.Column(db.DateTime, nullable=False)
-    patient_aadhar = db.Column(db.Integer, nullable=False)
-    patient_email = db.Column(db.String(100), nullable=False)
-    patient_contact = db.Column(db.String(15), nullable=False)
-    patient_address = db.Column(db.String(255), nullable=False)
-
-    def __repr__(self):
-        return f"{self.patient_id} - {self.patient_fname} - {self.patient_lname} - {self.patient_dob} - {self.patient_aadhar} - {self.patient_email} - {self.patient_contact} - {self.patient_address}"
-
-class Hospital(db.Model):
-    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    hospital_name = db.Column(db.String(100), nullable=False)
-    hospital_company_name = db.Column(db.String(100), nullable=False)
-    hospital_email = db.Column(db.String(100), nullable=False)
-    hospital_contact = db.Column(db.String(15), nullable=False)
-    hospital_address = db.Column(db.String(255), nullable=False)
-
-    def __repr__(self):
-        return f"{self.id} - {self.hospital_name} - {self.hospital_company_name} - {self.hospital_email} - {self.hospital_contact} - {self.hospital_address}"
-
-  
 @app.route("/")
 def hello_world():
     return render_template('index.html')
@@ -60,6 +22,29 @@ def dashboard():
     hospital_count = Hospital.query.count()
     return render_template('dashboard.html', count=count, patient_count=patient_count, hospital_count=hospital_count)
 
+@app.route("/visit_view")
+def visit_view():
+    return render_template('visit_view.html')
+
+
+@app.route("/visit_create")
+def visit_create():
+    return render_template('visit_create.html')
+
+
+class Demo(db.Model):
+    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    fname = db.Column(db.String(100), nullable=False)
+    lname = db.Column(db.String(100), nullable=False)
+    dob = db.Column(db.DateTime, nullable=False)
+    email = db.Column(db.String(100), nullable=False)
+    contact = db.Column(db.String(15), nullable=False)
+    degree = db.Column(db.String(100), nullable=False)
+    address = db.Column(db.String(255), nullable=False)
+
+    def __repr__(self):
+        return f"{self.id} - {self.fname} - {self.lname} - {self.dob} - {self.email} - {self.contact} - {self.degree} - {self.address}"
+    
 
 @app.route('/provider_create', methods=["GET", "POST"])
 def provider_create():
@@ -95,6 +80,47 @@ def provider_view():
     return render_template('provider_view.html', demo=allnew_demo, count=count)
 
 
+@app.route("/delete/<int:id>")
+def delete(id):
+    demo = Demo.query.filter_by(id=id).first()
+    if demo:
+        db.session.delete(demo)
+        db.session.commit()
+    return redirect(url_for('provider_view'))
+
+
+@app.route("/provider_update/<int:id>", methods=["GET", "POST"])
+def provider_update(id):
+    demo = Demo.query.filter_by(id=id).first()
+    if demo:
+        if request.method == "POST":
+            demo.fname = request.form.get('firstname')
+            demo.lname = request.form.get('lastname')
+            demo.dob = datetime.strptime(request.form.get('dob'), "%Y-%m-%d")
+            demo.email = request.form.get('email')
+            demo.contact = request.form.get('phone')
+            demo.degree = request.form.get('degree')
+            demo.address = request.form.get('address')
+
+            db.session.commit()
+
+            return redirect(url_for('provider_view'))
+    return render_template('provider_edit.html', demo=demo)
+
+
+class Patient(db.Model):
+    patient_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    patient_fname = db.Column(db.String(100), nullable=False)
+    patient_lname = db.Column(db.String(100), nullable=False)
+    patient_dob = db.Column(db.DateTime, nullable=False)
+    patient_aadhar = db.Column(db.Integer, nullable=False)
+    patient_email = db.Column(db.String(100), nullable=False)
+    patient_contact = db.Column(db.String(15), nullable=False)
+    patient_address = db.Column(db.String(255), nullable=False)
+
+    def __repr__(self):
+        return f"{self.patient_id} - {self.patient_fname} - {self.patient_lname} - {self.patient_dob} - {self.patient_aadhar} - {self.patient_email} - {self.patient_contact} - {self.patient_address}"
+
 
 @app.route('/patient_create', methods=["GET", "POST"])
 def patient_create():
@@ -125,11 +151,50 @@ def patient_create():
     return render_template('patient_create.html')
 
 
+@app.route("/patient_update/<int:patient_id>", methods=["GET", "POST"])
+def patient_update(patient_id):
+    patient = Patient.query.filter_by(patient_id=patient_id).first()
+    if patient:
+        if request.method == "POST":
+            patient.patient_fname = request.form.get('patient_fname')
+            patient.patient_lname = request.form.get('patient_lname')
+            patient.patient_dob = datetime.strptime(request.form.get('patient_dob'), "%Y-%m-%d")
+            patient.patient_aadhar = request.form.get('patient_aadhar')
+            patient.patient_email = request.form.get('patient_email')
+            patient.patient_contact = request.form.get('patient_contact')
+            patient.patient_address = request.form.get('patient_address')
+
+            db.session.commit()
+            return redirect(url_for('patient_view'))
+    return render_template('patient_edit.html', patient=patient)
+
+
 @app.route('/patient_view')
 def patient_view():
     allnew_patient = Patient.query.all()
     patient_count = Patient.query.count()
     return render_template('patient_view.html', new_patient=allnew_patient, patient_count=patient_count)
+
+
+@app.route("/delete/patient/<int:patient_id>")
+def delete_patient(patient_id):
+    patient = Patient.query.filter_by(patient_id=patient_id).first()
+    if patient:
+        db.session.delete(patient)
+        db.session.commit()
+    return redirect(url_for('patient_view'))
+
+
+class Hospital(db.Model):
+    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    hospital_name = db.Column(db.String(100), nullable=False)
+    hospital_company_name = db.Column(db.String(100), nullable=False)
+    hospital_email = db.Column(db.String(100), nullable=False)
+    hospital_contact = db.Column(db.String(15), nullable=False)
+    hospital_address = db.Column(db.String(255), nullable=False)
+
+    def __repr__(self):
+        return f"{self.id} - {self.hospital_name} - {self.hospital_company_name} - {self.hospital_email} - {self.hospital_contact} - {self.hospital_address}"
 
 
 @app.route("/hospital_create", methods=['GET', 'POST'])
@@ -154,58 +219,6 @@ def hospital_create():
     return render_template('hospital_create.html')
 
 
-@app.route('/hospital_view')
-def hospital_view():
-    allhospital = Hospital.query.all()
-    hospital_count = Hospital.query.count()
-    return render_template('hospital_view.html', hospital =allhospital, hospital_count=hospital_count)
-
-
-@app.route("/delete/<int:id>")
-def delete(id):
-    demo = Demo.query.filter_by(id=id).first()
-    if demo:
-        db.session.delete(demo)
-        db.session.commit()
-    return redirect(url_for('provider_view'))
-
-
-@app.route("/provider_update/<int:id>", methods=["GET", "POST"])
-def provider_update(id):
-    demo = Demo.query.filter_by(id=id).first()
-    if demo:
-        if request.method == "POST":
-            demo.fname = request.form.get('firstname')
-            demo.lname = request.form.get('lastname')
-            demo.dob = datetime.strptime(request.form.get('dob'), "%Y-%m-%d")
-            demo.email = request.form.get('email')
-            demo.contact = request.form.get('phone')
-            demo.degree = request.form.get('degree')
-            demo.address = request.form.get('address')
-
-            db.session.commit()
-
-            return redirect(url_for('provider_view'))
-    return render_template('provider_edit.html', demo=demo)
-
-@app.route("/patient_update/<int:patient_id>", methods=["GET", "POST"])
-def patient_update(patient_id):
-    patient = Patient.query.filter_by(patient_id=patient_id).first()
-    if patient:
-        if request.method == "POST":
-            patient.patient_fname = request.form.get('patient_fname')
-            patient.patient_lname = request.form.get('patient_lname')
-            patient.patient_dob = datetime.strptime(request.form.get('patient_dob'), "%Y-%m-%d")
-            patient.patient_aadhar = request.form.get('patient_aadhar')
-            patient.patient_email = request.form.get('patient_email')
-            patient.patient_contact = request.form.get('patient_contact')
-            patient.patient_address = request.form.get('patient_address')
-
-            db.session.commit()
-            return redirect(url_for('patient_view'))
-    return render_template('patient_edit.html', patient=patient)
-
-
 @app.route("/hospital_update/<int:id>", methods=["GET","POST"])
 def hospital_update(id):
     hospital = Hospital.query.filter_by(id=id).first()
@@ -222,13 +235,12 @@ def hospital_update(id):
     return render_template('hospital_edit.html', hospital=hospital)
 
 
-@app.route("/delete/patient/<int:patient_id>")
-def delete_patient(patient_id):
-    patient = Patient.query.filter_by(patient_id=patient_id).first()
-    if patient:
-        db.session.delete(patient)
-        db.session.commit()
-    return redirect(url_for('patient_view'))
+@app.route('/hospital_view')
+def hospital_view():
+    allhospital = Hospital.query.all()
+    hospital_count = Hospital.query.count()
+    return render_template('hospital_view.html', hospital =allhospital, hospital_count=hospital_count)
+
 
 @app.route("/delete/hospital/<int:id>")
 def delete_hospital(id):
@@ -238,15 +250,6 @@ def delete_hospital(id):
         db.session.commit()
     return redirect(url_for('hospital_view'))
 
-
-@app.route("/visit_view")
-def visit_view():
-    return render_template('visit_view.html')
-
-
-@app.route("/visit_create")
-def visit_create():
-    return render_template('visit_create.html')
 
 
 if __name__ == "__main__":

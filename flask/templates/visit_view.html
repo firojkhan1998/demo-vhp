@@ -38,9 +38,9 @@
   </tbody> -->
 </table>
 <div>
-  {% for patient in new_patient %}
-  {{ patient.some_column_name }}
+  {% for visit in visit %}
+  {{ visit.some_column_name }}
   {% endfor %}
-  <b>Total Number of Patients: {{ patient_count }}</b>
+  <b>Total Number of Visits: {{ visit_count }}</b>
 </div>
 {% endblock body %}
