@@ -1,14 +1,65 @@
 from flask_migrate import Migrate
-from flask import Flask, flash, render_template, request, redirect, url_for
+from flask import Flask, flash, render_template, request, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+import bcrypt
+import os
+
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///demo.db"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SECRET_KEY'] = os.urandom(24)
+app.config['SECRET_KEY'] = os.environ.get('FLASK_SECRET_KEY')
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_name = db.Column(db.String(100), nullable=False)
+    user_email = db.Column(db.String(100), unique=True)
+    user_password = db.Column(db.String(100))
+
+    def __init__(self,email,password,name):
+        self.user_name = name
+        self.user_email = email
+        self.user_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+
+    def check_password(self,password):
+        return bcrypt.checkpw(password.encode('utf-8'),self.user_password.encode('utf-8'))
+        
+
+@app.route("/login", methods=['GET','POST'])
+def login():
+    if request.method == 'POST':
+        user_email = request.form['email']
+        user_password = request.form['password']
+
+        user = User.query.filter_by(user_email=user_email).first()
+
+        if user and user.check_password(user_password):
+            session['name'] = user.user_name
+            session['email'] = user.user_email
+            return redirect('/dashboard')
+        else:
+            return render_template('login.html', error='Invalid User!')
+
+    return render_template('login.html')
+
+@app.route("/registration", methods=['GET','POST'])
+def registration():
+    if request.method == 'POST':
+        user_name = request.form['name']
+        user_email = request.form['email']
+        user_password = request.form['password']
+
+        new_user = User(email=user_email, password=user_password, name=user_name)
+        db.session.add(new_user)
+        db.session.commit()
+        return redirect('/login')
+    
+    return render_template('registration.html')
 
 @app.route("/")
 def hello_world():
@@ -17,10 +68,13 @@ def hello_world():
 
 @app.route("/dashboard")
 def dashboard():
-    count = Demo.query.count()
-    patient_count = Patient.query.count()
-    hospital_count = Hospital.query.count()
-    return render_template('dashboard.html', count=count, patient_count=patient_count, hospital_count=hospital_count)
+    if 'name' in session:
+        count = Demo.query.count()
+        patient_count = Patient.query.count()
+        hospital_count = Hospital.query.count()
+        return render_template('dashboard.html', count=count, patient_count=patient_count, hospital_count=hospital_count )
+    return redirect('/login')
+
 
 @app.route("/visit_view")
 def visit_view():
@@ -250,7 +304,8 @@ def delete_hospital(id):
         db.session.commit()
     return redirect(url_for('hospital_view'))
 
-
+with app.app_context():
+    db.create_all()
 
 if __name__ == "__main__":
     app.run(debug=True)
