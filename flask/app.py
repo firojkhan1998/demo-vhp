@@ -9,8 +9,7 @@ import os
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///demo.db"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = os.urandom(24)
-app.config['SECRET_KEY'] = os.environ.get('FLASK_SECRET_KEY')
+app.secret_key = 'secret_key'
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
@@ -39,7 +38,6 @@ def login():
         user = User.query.filter_by(user_email=user_email).first()
 
         if user and user.check_password(user_password):
-            session['name'] = user.user_name
             session['email'] = user.user_email
             return redirect('/dashboard')
         else:
