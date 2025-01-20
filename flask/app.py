@@ -301,6 +301,11 @@ def delete_hospital(id):
         db.session.commit()
     return redirect(url_for('hospital_view'))
 
+@app.route('/user_view')
+def user_view():
+    return render_template('user_view.html')
+
+
 with app.app_context():
     db.create_all()
 
