@@ -27,8 +27,9 @@ class User(db.Model):
 
     def check_password(self,password):
         return bcrypt.checkpw(password.encode('utf-8'),self.user_password.encode('utf-8'))
+    
         
-
+@app.route("/")
 @app.route("/login", methods=['GET','POST'])
 def login():
     if request.method == 'POST':
@@ -42,7 +43,6 @@ def login():
             return redirect('/dashboard')
         else:
             return render_template('login.html', error='Invalid User!')
-
     return render_template('login.html')
 
 @app.route("/registration", methods=['GET','POST'])
@@ -56,17 +56,16 @@ def registration():
         db.session.add(new_user)
         db.session.commit()
         return redirect('/login')
-    
     return render_template('registration.html')
 
-@app.route("/")
-def hello_world():
-    return render_template('index.html')
+# @app.route("/")
+# def hello_world():
+#     return render_template('index.html')
 
 
 @app.route("/dashboard")
 def dashboard():
-    if 'name' in session:
+    if 'email' in session:
         count = Demo.query.count()
         patient_count = Patient.query.count()
         hospital_count = Hospital.query.count()
