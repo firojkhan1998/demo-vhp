@@ -58,6 +58,36 @@ def registration():
         return redirect('/login')
     return render_template('registration.html')
 
+
+@app.route('/user_view')
+def user_view():
+    count=User.query.count()
+    new_user = User.query.all()
+    return render_template('user_view.html', new_user=new_user, count=count)
+
+@app.route("/delete/user/<int:id>")
+def delete_user(id):
+    new_user = User.query.filter_by(id=id).first()
+    if new_user:
+        db.session.delete(new_user)
+        db.session.commit()
+    return redirect(url_for('user_view'))
+
+
+@app.route("/user_update/<int:id>", methods=["GET", "POST"])
+def user_update(id):
+    user = User.query.filter_by(id=id).first()
+    if user:
+        if request.method == "POST":
+            user.user_name = request.form.get('name')
+            user.user_email = request.form.get('email')
+            user.user_password = request.form.get('password')
+
+            db.session.commit()
+
+            return redirect(url_for('user_view'))
+    return render_template('registration.html', user=user)
+
 # @app.route("/")
 # def hello_world():
 #     return render_template('index.html')
@@ -300,10 +330,6 @@ def delete_hospital(id):
         db.session.delete(hospital)
         db.session.commit()
     return redirect(url_for('hospital_view'))
-
-@app.route('/user_view')
-def user_view():
-    return render_template('user_view.html')
 
 
 with app.app_context():

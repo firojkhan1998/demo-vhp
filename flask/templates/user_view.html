@@ -21,11 +21,17 @@
             <td>{{user.user_name}}</td>
             <td>{{user.user_email}}</td>
             <td>
-                <a href="#" type="button" class="btn btn-secondary">Edit</a>
-                <a href="#" type="button" class="btn btn-danger">Delete</a>
+                <a href="/user_update/{{user.id}}" type="button" class="btn btn-secondary">Edit</a>
+                <a href="/delete/user/{{user.id}}" type="button" class="btn btn-danger">Delete</a>
             </td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
+<div>
+    {% for user in user %}
+    {{ user.some_column_name }}
+    {% endfor %}
+    <b>Total Number of User: {{ count }}</b>
+  </div>
 {% endblock body %}
