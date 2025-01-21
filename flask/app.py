@@ -43,7 +43,14 @@ def login():
             return redirect('/dashboard')
         else:
             return render_template('login.html', error='Invalid User!')
+        
     return render_template('login.html')
+
+@app.route("/logout")
+def logout():
+    session.pop('email', None) 
+    return redirect('/login')
+
 
 @app.route("/registration", methods=['GET','POST'])
 def registration():
@@ -51,6 +58,9 @@ def registration():
         user_name = request.form['name']
         user_email = request.form['email']
         user_password = request.form['password']
+
+        if User.query.filter_by(user_email=user_email).first():
+            return render_template('registration.html', error="Email already registered.")
 
         new_user = User(email=user_email, password=user_password, name=user_name)
         db.session.add(new_user)
@@ -62,8 +72,8 @@ def registration():
 @app.route('/user_view')
 def user_view():
     count=User.query.count()
-    new_user = User.query.all()
-    return render_template('user_view.html', new_user=new_user, count=count)
+    current_user = User.query.all()
+    return render_template('user_view.html', user=current_user, count=count)
 
 @app.route("/delete/user/<int:id>")
 def delete_user(id):
@@ -88,18 +98,15 @@ def user_update(id):
             return redirect(url_for('user_view'))
     return render_template('registration.html', user=user)
 
-# @app.route("/")
-# def hello_world():
-#     return render_template('index.html')
-
 
 @app.route("/dashboard")
 def dashboard():
     if 'email' in session:
+        user = User.query.filter_by(user_email=session['email']).first()
         count = Demo.query.count()
         patient_count = Patient.query.count()
         hospital_count = Hospital.query.count()
-        return render_template('dashboard.html', count=count, patient_count=patient_count, hospital_count=hospital_count )
+        return render_template('dashboard.html', user=user, count=count, patient_count=patient_count, hospital_count=hospital_count )
     return redirect('/login')
 
 
