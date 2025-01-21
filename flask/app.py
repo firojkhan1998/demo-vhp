@@ -112,7 +112,9 @@ def dashboard():
 
 @app.route("/visit_view")
 def visit_view():
-    return render_template('visit_view.html')
+    if 'email' in session:
+        user = User.query.filter_by(user_email=session['email']).first()
+    return render_template('visit_view.html', user=user)
 
 
 @app.route("/visit_create")
@@ -163,9 +165,11 @@ def provider_create():
 
 @app.route('/provider_view')
 def provider_view():
-    allnew_demo = Demo.query.all()
-    count = Demo.query.count()
-    return render_template('provider_view.html', demo=allnew_demo, count=count)
+    if 'email' in session:
+        user = User.query.filter_by(user_email=session['email']).first()
+        allnew_demo = Demo.query.all()
+        count = Demo.query.count()
+    return render_template('provider_view.html', user=user, demo=allnew_demo, count=count)
 
 
 @app.route("/delete/<int:id>")
@@ -259,9 +263,11 @@ def patient_update(patient_id):
 
 @app.route('/patient_view')
 def patient_view():
-    allnew_patient = Patient.query.all()
-    patient_count = Patient.query.count()
-    return render_template('patient_view.html', new_patient=allnew_patient, patient_count=patient_count)
+    if 'email' in session:
+        user = User.query.filter_by(user_email=session['email']).first()
+        allnew_patient = Patient.query.all()
+        patient_count = Patient.query.count()
+    return render_template('patient_view.html', user=user, new_patient=allnew_patient, patient_count=patient_count)
 
 
 @app.route("/delete/patient/<int:patient_id>")
@@ -325,9 +331,11 @@ def hospital_update(id):
 
 @app.route('/hospital_view')
 def hospital_view():
-    allhospital = Hospital.query.all()
-    hospital_count = Hospital.query.count()
-    return render_template('hospital_view.html', hospital =allhospital, hospital_count=hospital_count)
+    if 'email' in session:
+        user = User.query.filter_by(user_email=session['email']).first()
+        allhospital = Hospital.query.all()
+        hospital_count = Hospital.query.count()
+    return render_template('hospital_view.html', user=user, hospital =allhospital, hospital_count=hospital_count)
 
 
 @app.route("/delete/hospital/<int:id>")
