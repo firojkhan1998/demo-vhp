@@ -46,6 +46,7 @@ def login():
         
     return render_template('login.html')
 
+
 @app.route("/logout")
 def logout():
     session.pop('email', None) 
@@ -72,8 +73,8 @@ def registration():
 @app.route('/user_view')
 def user_view():
     count=User.query.count()
-    current_user = User.query.all()
-    return render_template('user_view.html', user=current_user, count=count)
+    user = User.query.all()
+    return render_template('user_view.html', user=user, count=count)
 
 @app.route("/delete/user/<int:id>")
 def delete_user(id):
@@ -119,7 +120,8 @@ def visit_view():
 
 @app.route("/visit_create")
 def visit_create():
-    return render_template('visit_create.html')
+    user = User.query.filter_by(user_email=session['email']).first()
+    return render_template('visit_create.html', user=user)
 
 
 class Demo(db.Model):
@@ -138,6 +140,7 @@ class Demo(db.Model):
 
 @app.route('/provider_create', methods=["GET", "POST"])
 def provider_create():
+    user = User.query.filter_by(user_email=session['email']).first()
     if request.method == "POST":
         fname = request.form['firstname']
         lname = request.form['lastname']
@@ -160,7 +163,7 @@ def provider_create():
         db.session.add(new_demo)
         db.session.commit()
         return redirect(url_for('provider_view'))
-    return render_template('provider_create.html')
+    return render_template('provider_create.html', user=user)
 
 
 @app.route('/provider_view')
@@ -175,15 +178,17 @@ def provider_view():
 @app.route("/delete/<int:id>")
 def delete(id):
     demo = Demo.query.filter_by(id=id).first()
+    user = User.query.filter_by(user_email=session['email']).first()
     if demo:
         db.session.delete(demo)
         db.session.commit()
-    return redirect(url_for('provider_view'))
+    return redirect(url_for('provider_view', user=user))
 
 
 @app.route("/provider_update/<int:id>", methods=["GET", "POST"])
 def provider_update(id):
     demo = Demo.query.filter_by(id=id).first()
+    user = User.query.filter_by(user_email=session['email']).first()
     if demo:
         if request.method == "POST":
             demo.fname = request.form.get('firstname')
@@ -197,7 +202,7 @@ def provider_update(id):
             db.session.commit()
 
             return redirect(url_for('provider_view'))
-    return render_template('provider_edit.html', demo=demo)
+    return render_template('provider_edit.html', user=user, demo=demo)
 
 
 class Patient(db.Model):
@@ -216,6 +221,7 @@ class Patient(db.Model):
 
 @app.route('/patient_create', methods=["GET", "POST"])
 def patient_create():
+    user = User.query.filter_by(user_email=session['email']).first()
     if request.method == "POST":
         patient_fname = request.form['patient_fname']
         patient_lname = request.form['patient_lname']
@@ -240,11 +246,12 @@ def patient_create():
         db.session.add(new_patient)
         db.session.commit()
         return redirect(url_for('patient_view', patient_name=patient_name))
-    return render_template('patient_create.html')
+    return render_template('patient_create.html',user=user)
 
 
 @app.route("/patient_update/<int:patient_id>", methods=["GET", "POST"])
 def patient_update(patient_id):
+    user = User.query.filter_by(user_email=session['email']).first()
     patient = Patient.query.filter_by(patient_id=patient_id).first()
     if patient:
         if request.method == "POST":
@@ -258,7 +265,7 @@ def patient_update(patient_id):
 
             db.session.commit()
             return redirect(url_for('patient_view'))
-    return render_template('patient_edit.html', patient=patient)
+    return render_template('patient_edit.html', patient=patient, user=user)
 
 
 @app.route('/patient_view')
@@ -292,7 +299,8 @@ class Hospital(db.Model):
 
 
 @app.route("/hospital_create", methods=['GET', 'POST'])
-def hospital_create():    
+def hospital_create():
+    user = User.query.filter_by(user_email=session['email']).first()  
     if request.method == "POST":
         hospital_name = request.form['hospital_name']
         hospital_company_name = request.form['hospital_company_name']
@@ -310,12 +318,13 @@ def hospital_create():
         db.session.add(hospital)
         db.session.commit()
         return redirect(url_for('hospital_view'))
-    return render_template('hospital_create.html')
+    return render_template('hospital_create.html', user=user)
 
 
 @app.route("/hospital_update/<int:id>", methods=["GET","POST"])
 def hospital_update(id):
     hospital = Hospital.query.filter_by(id=id).first()
+    user = User.query.filter_by(user_email=session['email']).first()
     if hospital:
         if request.method == "POST":
             hospital.hospital_name = request.form.get('hospital_name')
@@ -326,7 +335,7 @@ def hospital_update(id):
 
             db.session.commit()
             return redirect(url_for('hospital_view'))
-    return render_template('hospital_edit.html', hospital=hospital)
+    return render_template('hospital_edit.html', hospital=hospital, user=user)
 
 
 @app.route('/hospital_view')
