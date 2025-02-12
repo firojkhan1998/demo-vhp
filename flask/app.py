@@ -72,8 +72,10 @@ def registration():
 
 @app.route('/user_view')
 def user_view():
-    count=User.query.count()
-    user = User.query.all()
+    if 'email' in session:
+        user = User.query.filter_by(user_email=session['email']).first()
+        count=User.query.count()
+        user = User.query.all()
     return render_template('user_view.html', user=user, count=count)
 
 @app.route("/delete/user/<int:id>")
@@ -142,13 +144,13 @@ class Demo(db.Model):
 def provider_create():
     user = User.query.filter_by(user_email=session['email']).first()
     if request.method == "POST":
-        fname = request.form['firstname']
-        lname = request.form['lastname']
-        dob = request.form['dob']
-        email = request.form['email']
-        contact = request.form['phone']
-        degree = request.form['degree']
-        address = request.form['address']
+        fname = request.form['firstname'].strip()
+        lname = request.form['lastname'].strip()
+        dob = request.form['dob'].strip()
+        email = request.form['email'].strip()
+        contact = request.form['phone'].strip()
+        degree = request.form['degree'].strip()
+        address = request.form['address'].strip()
         dob = datetime.strptime(dob, "%Y-%m-%d")
 
         new_demo = Demo(
